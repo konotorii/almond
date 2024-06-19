@@ -1,10 +1,10 @@
-import fetch from 'node-fetch';
 import retry from 'async-retry';
 import convertStream from 'stream-to-string';
 import ms from 'ms';
 
 // Utilities
 import checkPlatform from './platform'
+import axios from "axios";
 
 interface CacheConfig {
     account: string,
@@ -77,7 +77,12 @@ export class Cache {
 
         const {status, body} = await retry(
             async () => {
-                const response = await fetch(url, {headers})
+                const response = await axios({
+                    url: url,
+                    method: "GET",
+                    headers,
+                    responseType: "arraybuffer"
+                })
 
                 if (response.status !== 200) {
                     throw new Error(
@@ -85,7 +90,7 @@ export class Cache {
                     )
                 }
 
-                return response
+                return response.data
             },
             {retries: 3}
         )

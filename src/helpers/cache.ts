@@ -11,193 +11,203 @@ interface CacheConfig {
     repository: string,
     token: string,
     url: string,
-    lastUpdate: null | 0 | Date,
-    isOutdated: () => boolean,
-    interval: number,
-
+    pre: any
+    lastUpdate?: null | number,
+    interval?: number,
+    latest?: {
+        version: string,
+        notes: string,
+        pub_date: Date,
+        platforms: {
+            platform: string,
+            name: string,
+            api_url: string,
+            url: string,
+            content_type: string,
+            size: number,
+        }[],
+        files: {
+            releases: string
+        },
+    },
 }
 
 export class Cache {
-  config: CacheConfig
+    config: CacheConfig
 
-  constructor(config: CacheConfig) {
-    const { account, repository, token, url } = config
-    this.config = config
+    constructor(config: CacheConfig) {
+        const {account, repository, token, url} = config
+        this.config = config
 
-    if (!account || !repository) {
-      const error = new Error('Neither ACCOUNT, nor REPOSITORY are defined')
-      error.code = 'missing_configuration_properties'
-      throw error
-    }
-
-    if (token && !url) {
-      const error = new Error(
-        'Neither VERCEL_URL, nor URL are defined, which are mandatory for private repo mode'
-      )
-      error.code = 'missing_configuration_properties'
-      throw error
-    }
-
-    this.config.latest = {}
-    this.config.lastUpdate = null
-
-    this.config.cacheReleaseList = this.cacheReleaseList.bind(this)
-    this.config.refreshCache = this.refreshCache.bind(this)
-    this.config.loadCache = this.loadCache.bind(this)
-    this.config.isOutdated = this.isOutdated
-  }
-
-  async cacheReleaseList(url: string) {
-    const { token } = this.config
-    const headers = { Accept: 'application/vnd.github.preview' }
-
-    if (token && typeof token === 'string' && token.length > 0) {
-      headers.Authorization = `token ${token}`
-    }
-
-    const { status, body } = await retry(
-      async () => {
-        const response = await fetch(url, { headers })
-
-        if (response.status !== 200) {
-          throw new Error(
-            `Tried to cache RELEASES, but failed fetching ${url}, status ${status}`
-          )
+        if (!account || !repository) {
+            const error = new Error('Neither ACCOUNT, nor REPOSITORY are defined')
+            error.name = 'missing_configuration_properties'
+            throw error
         }
 
-        return response
-      },
-      { retries: 3 }
-    )
-
-    let content = await convertStream(body)
-    const matches = content.match(/[^ ]*\.nupkg/gim)
-
-    if (matches.length === 0) {
-      throw new Error(
-        `Tried to cache RELEASES, but failed. RELEASES content doesn't contain nupkg`
-      )
-    }
-
-    for (let i = 0; i < matches.length; i += 1) {
-      const nuPKG = url.replace('RELEASES', matches[i])
-      content = content.replace(matches[i], nuPKG)
-    }
-    return content
-  }
-
-  async refreshCache() {
-    const { account, repository, pre, token } = this.config
-    const repo = account + '/' + repository
-    const url = `https://api.github.com/repos/${repo}/releases?per_page=100`
-    const headers = { Accept: 'application/vnd.github.preview' }
-
-    if (token && typeof token === 'string' && token.length > 0) {
-      headers.Authorization = `token ${token}`
-    }
-
-    const response = await retry(
-      async () => {
-        const response = await fetch(url, { headers })
-
-        if (response.status !== 200) {
-          throw new Error(
-            `GitHub API responded with ${response.status} for url ${url}`
-          )
+        if (token && !url) {
+            const error = new Error(
+                'Neither VERCEL_URL, nor URL are defined, which are mandatory for private repo mode'
+            )
+            error.name = 'missing_configuration_properties'
+            throw error
         }
 
-        return response
-      },
-      { retries: 3 }
-    )
-
-    const data = await response.json()
-
-    if (!Array.isArray(data) || data.length === 0) {
-      return
+        this.config.lastUpdate = null
     }
 
-    const release = data.find(item => {
-      const isPre = Boolean(pre) === Boolean(item.prerelease)
-      return !item.draft && isPre
-    })
+    async cacheReleaseList(url: string) {
+        const {token} = this.config
+        const headers: HeadersInit = {Accept: 'application/vnd.github.preview'}
 
-    if (!release || !release.assets || !Array.isArray(release.assets)) {
-      return
-    }
-
-    const { tag_name } = release
-
-    if (this.config.latest.version === tag_name) {
-      console.log('Cached version is the same as latest')
-      this.lastUpdate = Date.now()
-      return
-    }
-
-    console.log(`Caching version ${tag_name}...`)
-
-    this.config.latest.version = tag_name
-    this.config.latest.notes = release.body
-    this.config.latest.pub_date = release.published_at
-
-    // Clear list of download links
-    this.config.latest.platforms = {}
-
-    for (const asset of release.assets) {
-      const { name, browser_download_url, url, content_type, size } = asset
-
-      if (name === 'RELEASES') {
-        try {
-          if (!this.config.latest.files) {
-            this.config.latest.files = {}
-          }
-          this.config.latest.files.RELEASES = await this.cacheReleaseList(
-            browser_download_url
-          )
-        } catch (err) {
-          console.error(err)
+        if (token && token.length > 0) {
+            headers.Authorization = `Token ${token}`
         }
-        continue
-      }
 
-      const platform = checkPlatform(name)
+        const {status, body} = await retry(
+            async () => {
+                const response = await fetch(url, {headers})
 
-      if (!platform) {
-        continue
-      }
+                if (response.status !== 200) {
+                    throw new Error(
+                        `Tried to cache RELEASES, but failed fetching ${url}, status ${status}`
+                    )
+                }
 
-      this.config.latest.platforms[platform] = {
-        name,
-        api_url: url,
-        url: browser_download_url,
-        content_type,
-        size: Math.round(size / 1000000 * 10) / 10
-      }
+                return response
+            },
+            {retries: 3}
+        )
+
+        if (!body) throw new Error(`Tried to cache RELEASES, but failed. RELEASES content doesn't contain nupkg`)
+
+        let content = await convertStream(body)
+        const matches = content.match(/[^ ]*\.nupkg/gim)
+
+        if (!matches) throw new Error(`Tried to cache RELEASES, but failed. RELEASES content doesn't contain nupkg`)
+
+        if (matches.length === 0) throw new Error(`Tried to cache RELEASES, but failed. RELEASES content doesn't contain nupkg`)
+
+        for (let i = 0; i < matches.length; i += 1) {
+            const nuPKG = url.replace('RELEASES', matches[i])
+            content = content.replace(matches[i], nuPKG)
+        }
+        return content
     }
 
-    console.log(`Finished caching version ${tag_name}`)
-    this.config.lastUpdate = Date.now()
-  }
+    async refreshCache() {
+        const {account, repository, pre, token} = this.config
+        const repo = account + '/' + repository
+        const url = `https://api.github.com/repos/${repo}/releases?per_page=100`
+        const headers: HeadersInit = {Accept: 'application/vnd.github.preview'}
 
-  isOutdated() {
-    const { lastUpdate } = this.config
-    const { interval = 15 } = this.config
+        if (token && token.length > 0) {
+            headers.Authorization = `token ${token}`
+        }
 
-    return !!(lastUpdate && Date.now() - lastUpdate > ms(`${interval}m`));
+        const response = await retry(
+            async () => {
+                const response = await fetch(url, {headers})
 
+                if (response.status !== 200) {
+                    throw new Error(
+                        `GitHub API responded with ${response.status} for url ${url}`
+                    )
+                }
 
-  }
+                return response
+            },
+            {retries: 3}
+        )
 
-  // This is a method returning the cache
-  // because the cache would otherwise be loaded
-  // only once when the index file is parsed
-  async loadCache() {
-    const { latest, refreshCache, isOutdated, lastUpdate } = this.config
+        const data = await response.json()
 
-    if (!lastUpdate || isOutdated()) {
-      await refreshCache()
+        if (!Array.isArray(data) || data.length === 0) {
+            return
+        }
+
+        const release = data.find(item => {
+            const isPre = Boolean(pre) === Boolean(item.prerelease)
+            return !item.draft && isPre
+        })
+
+        if (!release || !release.assets || !Array.isArray(release.assets)) {
+            return
+        }
+
+        const {tag_name} = release
+
+        if (this.config.latest.version === tag_name) {
+            console.log('Cached version is the same as latest')
+            this.config.lastUpdate = Date.now()
+            return
+        }
+
+        console.log(`Caching version ${tag_name}...`)
+
+        this.config.latest.version = tag_name
+        this.config.latest.notes = release.body
+        this.config.latest.pub_date = release.published_at
+
+        // Clear list of download links
+        this.config.latest.platforms = []
+
+        for (const asset of release.assets) {
+            const {name, browser_download_url, url, content_type, size} = asset
+
+            if (name === 'RELEASES') {
+                try {
+                    if (!this.config.latest.files) {
+                        this.config.latest.files = []
+                    }
+                    this.config.latest.files. = await this.cacheReleaseList(
+                        browser_download_url
+                    )
+                } catch (err) {
+                    console.error(err)
+                }
+                continue
+            }
+
+            const platform = checkPlatform(name)
+
+            if (!platform) {
+                continue
+            }
+
+            this.config.latest.platforms.push({
+                name,
+                api_url: url,
+                url: browser_download_url,
+                content_type,
+                size: Math.round(size / 1000000 * 10) / 10,
+                platform: platform,
+            });
+        }
+
+        console.log(`Finished caching version ${tag_name}`)
+        this.config.lastUpdate = Date.now()
     }
 
-    return Object.assign({}, latest)
-  }
+    isOutdated() {
+        const {lastUpdate} = this.config
+        const {interval = 15} = this.config
+
+        return !!(lastUpdate && Date.now() - lastUpdate > ms(`${interval}m`));
+
+
+    }
+
+    // This is a method returning the cache
+    // because the cache would otherwise be loaded
+    // only once when the index file is parsed
+    async loadCache() {
+        const {latest, refreshCache, isOutdated, lastUpdate} = this.config
+
+        if (!lastUpdate || isOutdated()) {
+            await refreshCache()
+        }
+
+        return Object.assign({}, latest)
+    }
 }

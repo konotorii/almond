@@ -5,6 +5,7 @@ import ms from 'ms';
 // Utilities
 import checkPlatform from './platform'
 import axios from "axios";
+import consola from "consola";
 
 interface CacheConfig {
     account: string,
@@ -36,6 +37,8 @@ export class Cache {
     }
 
     constructor(config: CacheConfig) {
+        consola.debug('Cache constructor');
+
         const {account, repository, token, url} = config
         this.config = config
         this.cache = {
@@ -65,6 +68,10 @@ export class Cache {
         }
 
         this.cache.lastUpdate = null
+
+        console.log(this.cache)
+
+        consola.success('Cache successfully constructed!');
     }
 
     async cacheReleaseList(url: string) {

@@ -1,4 +1,19 @@
-# 1.1.0 (2024-06-19)
+# [1.2.0](https://github.com/konotorii/almond/compare/v1.1.0...v1.2.0) (2024-06-19)
+
+
+### Bug Fixes
+
+* Index file uses consola ([99f0b58](https://github.com/konotorii/almond/commit/99f0b5803d736e0986603a69e0f16b8de7bd8ea4))
+* Remove missing interface import ([37579e8](https://github.com/konotorii/almond/commit/37579e8e6e0a237aeb6c2b94b22cb35ce79c048d))
+
+
+### Features
+
+* Added consola package ([df099bc](https://github.com/konotorii/almond/commit/df099bcf2b7884b9b4891fd3b91dfad83773910a))
+
+
+
+# [1.1.0](https://github.com/konotorii/almond/compare/50e17a2314bba38db247fd58bb843c4be890ac43...v1.1.0) (2024-06-19)
 
 
 ### Bug Fixes

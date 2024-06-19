@@ -12,32 +12,43 @@ interface CacheConfig {
     token: string,
     url: string,
     pre: any
-    lastUpdate?: null | number,
-    interval?: number,
-    latest?: {
-        version: string,
-        notes: string,
-        pub_date: Date,
-        platforms: {
-            platform: string,
-            name: string,
-            api_url: string,
-            url: string,
-            content_type: string,
-            size: number,
-        }[],
-        files: {
-            releases: string
-        },
-    },
 }
 
 export class Cache {
     config: CacheConfig
+    cache: {
+        lastUpdate: null | number,
+        interval: number,
+        latest: {
+            version: string,
+            notes: string,
+            pub_date: number,
+            platforms: {
+                platform: string,
+                name: string,
+                api_url: string,
+                url: string,
+                content_type: string,
+                size: number,
+            }[],
+            files: any | any[]
+        },
+    }
 
     constructor(config: CacheConfig) {
         const {account, repository, token, url} = config
         this.config = config
+        this.cache = {
+            lastUpdate: null,
+            interval: 0,
+            latest: {
+                version: "",
+                notes: "",
+                pub_date: Date.now(),
+                platforms: [],
+                files: [],
+            }
+        }
 
         if (!account || !repository) {
             const error = new Error('Neither ACCOUNT, nor REPOSITORY are defined')
@@ -53,7 +64,7 @@ export class Cache {
             throw error
         }
 
-        this.config.lastUpdate = null
+        this.cache.lastUpdate = null
     }
 
     async cacheReleaseList(url: string) {
@@ -137,30 +148,30 @@ export class Cache {
 
         const {tag_name} = release
 
-        if (this.config.latest.version === tag_name) {
+        if (this.cache.latest.version === tag_name) {
             console.log('Cached version is the same as latest')
-            this.config.lastUpdate = Date.now()
+            this.cache.lastUpdate = Date.now()
             return
         }
 
         console.log(`Caching version ${tag_name}...`)
 
-        this.config.latest.version = tag_name
-        this.config.latest.notes = release.body
-        this.config.latest.pub_date = release.published_at
+        this.cache.latest.version = tag_name
+        this.cache.latest.notes = release.body
+        this.cache.latest.pub_date = release.published_at
 
         // Clear list of download links
-        this.config.latest.platforms = []
+        this.cache.latest.platforms = []
 
         for (const asset of release.assets) {
             const {name, browser_download_url, url, content_type, size} = asset
 
             if (name === 'RELEASES') {
                 try {
-                    if (!this.config.latest.files) {
-                        this.config.latest.files = []
+                    if (!this.cache.latest.files) {
+                        this.cache.latest.files = []
                     }
-                    this.config.latest.files. = await this.cacheReleaseList(
+                    this.cache.latest.files.releases = await this.cacheReleaseList(
                         browser_download_url
                     )
                 } catch (err) {
@@ -175,7 +186,7 @@ export class Cache {
                 continue
             }
 
-            this.config.latest.platforms.push({
+            this.cache.latest.platforms.push({
                 name,
                 api_url: url,
                 url: browser_download_url,
@@ -186,12 +197,12 @@ export class Cache {
         }
 
         console.log(`Finished caching version ${tag_name}`)
-        this.config.lastUpdate = Date.now()
+        this.cache.lastUpdate = Date.now()
     }
 
     isOutdated() {
-        const {lastUpdate} = this.config
-        const {interval = 15} = this.config
+        const {lastUpdate} = this.cache
+        const {interval = 15} = this.cache
 
         return !!(lastUpdate && Date.now() - lastUpdate > ms(`${interval}m`));
 
@@ -202,10 +213,10 @@ export class Cache {
     // because the cache would otherwise be loaded
     // only once when the index file is parsed
     async loadCache() {
-        const {latest, refreshCache, isOutdated, lastUpdate} = this.config
+        const {latest, lastUpdate} = this.cache
 
-        if (!lastUpdate || isOutdated()) {
-            await refreshCache()
+        if (!lastUpdate || this.isOutdated()) {
+            await this.refreshCache()
         }
 
         return Object.assign({}, latest)

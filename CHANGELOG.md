@@ -1,3 +1,12 @@
+# [1.3.0](https://github.com/konotorii/almond/compare/v1.2.0...v1.3.0) (2024-06-19)
+
+
+### Features
+
+* Dockerfile ([214d874](https://github.com/konotorii/almond/commit/214d87493a253d2ee57756fbbc11f7e2c8d6b479))
+
+
+
 # [1.2.0](https://github.com/konotorii/almond/compare/v1.1.0...v1.2.0) (2024-06-19)
 
 

@@ -1,29 +1,52 @@
-const aliases = {
-  darwin: ['mac', 'macos', 'osx'],
-  exe: ['win32', 'windows', 'win'],
-  deb: ['debian'],
-  rpm: ['fedora'],
-  AppImage: ['appimage'],
-  dmg: ['dmg']
+const aliases = [
+    {
+        name: "darwin",
+        types: ['mac', 'macos', 'osx']
+    },
+    {
+        name: "exe",
+        types: ['win32', 'windows', 'win'],
+    },
+    {
+        name: "deb",
+        types: ['debian'],
+    },
+    {
+        name: "rpm",
+        types: ['fedora'],
+    },
+    {
+        name: "AppImage",
+        types: ['appimage'],
+    },
+    {
+        name: "dmg",
+        types: ['dmg'],
+    },
+]
+
+for (const existingPlatform in aliases) {
+    const newPlatform = existingPlatform + '_arm64';
+    aliases.push({
+        name: newPlatform,
+        types: aliases[existingPlatform].types.map((alias: string) => `${alias}_arm64`)
+    });
 }
 
-for (const existingPlatform of Object.keys(aliases)) {
-  const newPlatform = existingPlatform + '_arm64';
-  aliases[newPlatform] = aliases[existingPlatform].map((alias: any) => `${alias}_arm64`);
-}
+export default function checkAlias(platform: string) {
+    const find = aliases.find((v) => v.name == platform)
 
-export default function checkAlias(platform: string)  {
-  if (typeof aliases[platform] !== 'undefined') {
-    return platform
-  }
-
-  for (const guess of Object.keys(aliases)) {
-    const list = aliases[guess]
-
-    if (list.includes(platform)) {
-      return guess
+    if (typeof find !== 'undefined') {
+        return platform
     }
-  }
 
-  return ""
+    for (const guess in aliases) {
+        const list = aliases[guess]
+
+        if (list.types.includes(platform)) {
+            return guess
+        }
+    }
+
+    return ""
 }

@@ -1,5 +1,4 @@
 import {send} from 'micro';
-import fetch from 'node-fetch';
 import {Request, Response} from 'express';
 
 export default async function proxyPrivateDownload(asset: any, token: string, req: Request, res: Response) {

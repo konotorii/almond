@@ -30,8 +30,6 @@ const cache = new Cache({
 
 const shouldProxyPrivateDownload = cache.config.token  && cache.config.token.length > 0
 
-const {loadCache} = cache
-
 app.get('/download', async (req, res) => {
     const userAgent = parse(req.headers['user-agent'] || "")
     const params = urlHelpers.parse(req.url, true).query
@@ -50,7 +48,7 @@ app.get('/download', async (req, res) => {
     }
 
     // Get the latest version from the cache
-    const {platforms} = await loadCache()
+    const {platforms} = await cache.loadCache()
 
     const findPlatform = platforms.find((v) => v.platform == platform)
 
@@ -88,7 +86,7 @@ app.get('/download/:platform', async (req, res) => {
     else platform = ''
 
     // Get the latest version from the cache
-    const latest = await loadCache()
+    const latest = await cache.loadCache()
 
     // Check platform for appropriate aliases
     platform = checkAlias(platform)
@@ -145,7 +143,7 @@ app.get('/update/:platform/:version', async (req, res) => {
     }
 
     // Get the latest version from the cache
-    const latest = await loadCache()
+    const latest = await cache.loadCache()
 
     if (!latest.platforms || !findPlatform) {
         res.statusCode = 204
@@ -189,7 +187,7 @@ app.get('/overview', async (req, res) => {
 
 app.get('/releases', async (req, res) => {
     // Get the latest version from the cache
-    const latest = await loadCache()
+    const latest = await cache.loadCache()
 
     if (!latest.files || !latest.files.releases) {
         res.statusCode = 204

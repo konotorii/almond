@@ -91,10 +91,6 @@ app.get('/download/:platform', async (req, res) => {
     // Check platform for appropriate aliases
     platform = checkAlias(platform)
 
-    const findPlatform = latest.platforms.find((v) => v.platform == platform)
-
-    if (!findPlatform) return send(res, 404, 'Specified platform not found!')
-
     if (!platform) {
         send(res, 500, 'The specified platform is not valid')
         return
@@ -111,7 +107,7 @@ app.get('/download/:platform', async (req, res) => {
     }
 
     res.writeHead(302, {
-        Location: findPlatform.url
+        Location: latest.platforms.find((v) => v.platform == platform)?.url
     })
 
     res.end()

@@ -44,7 +44,7 @@ export default function checkAlias(platform: string) {
         const list = aliases[guess]
 
         if (list.types.includes(platform)) {
-            return guess
+            return aliases[guess].name
         }
     }
 

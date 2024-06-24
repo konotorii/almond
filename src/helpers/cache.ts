@@ -163,7 +163,7 @@ export class Cache {
         if (this.cache.latest.version === tag_name) {
             console.log('Cached version is the same as latest')
             this.cache.lastUpdate = Date.now()
-            return
+            return this.cache.latest
         }
 
         console.log(`Caching version ${tag_name}...`)

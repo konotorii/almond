@@ -1,3 +1,17 @@
+# [1.5.0](https://github.com/konotorii/almond/compare/v1.4.0...v1.5.0) (2024-06-24)
+
+
+### Bug Fixes
+
+* Return latest cache if already cached ([f460a97](https://github.com/konotorii/almond/commit/f460a97ae4e4da6aefae1da4523f740c25aef697))
+
+
+### Features
+
+* Updated .env sample to latest ([020df53](https://github.com/konotorii/almond/commit/020df531f4d31cccfebd20a02b662419d49a5888))
+
+
+
 # [1.4.0](https://github.com/konotorii/almond/compare/v1.3.0...v1.4.0) (2024-06-24)
 
 

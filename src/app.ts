@@ -10,6 +10,7 @@ import {send} from "micro";
 import checkAlias from "./helpers/aliases";
 import {valid, compare} from 'semver';
 import urlHelpers from 'url';
+import consola from "consola";
 
 require('dotenv').config();
 
@@ -35,7 +36,7 @@ app.get('/version', async (req, res) => {
 
     if (!latest) return res.status(500).send('Latest not found.')
 
-    return res.send({version: latest.version})
+    return res.send({version: latest.version, notes: latest.notes})
 });
 
 app.get('/download', async (req, res) => {

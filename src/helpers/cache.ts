@@ -210,6 +210,8 @@ export class Cache {
 
         console.log(`Finished caching version ${tag_name}`)
         this.cache.lastUpdate = Date.now()
+
+        return this.cache.latest
     }
 
     isOutdated() {
@@ -228,7 +230,7 @@ export class Cache {
         const {latest, lastUpdate} = this.cache
 
         if (!lastUpdate || this.isOutdated()) {
-            await this.refreshCache()
+            return Object.assign({}, await this.refreshCache())
         }
 
         return Object.assign({}, latest)

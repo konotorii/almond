@@ -30,6 +30,14 @@ const cache = new Cache({
 
 const shouldProxyPrivateDownload = cache.config.token  && cache.config.token.length > 0
 
+app.get('/version', async (req, res) => {
+    const latest = await cache.loadCache()
+
+    if (!latest) return res.status(500).send('Latest not found.')
+
+    return res.send({version: latest.version})
+});
+
 app.get('/download', async (req, res) => {
     const userAgent = parse(req.headers['user-agent'] || "")
     const params = urlHelpers.parse(req.url, true).query

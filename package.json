@@ -1,6 +1,6 @@
 {
   "name": "almond",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "Electron updating server made to be super light-weight and easy to use and deploy, written in TypeScript!",
   "main": "src/index.ts",
   "scripts": {

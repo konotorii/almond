@@ -1,3 +1,12 @@
+## [1.6.2](https://github.com/konotorii/almond/compare/v1.6.1...v1.6.2) (2024-06-24)
+
+
+### Bug Fixes
+
+* Debug console logs to see what requested platform is ([b854f0d](https://github.com/konotorii/almond/commit/b854f0d86ac3b6012ca95c004f99431568503c07))
+
+
+
 ## [1.6.1](https://github.com/konotorii/almond/compare/v1.6.0...v1.6.1) (2024-06-24)
 
 
@@ -53,15 +62,6 @@
 * API route for getting current version ([5e2c2f8](https://github.com/konotorii/almond/commit/5e2c2f88b3f8375061b5fb14c1dd8a9f4f8133c8))
 * Axios Dependency ([b7eaf0d](https://github.com/konotorii/almond/commit/b7eaf0db4865e0536fe21acac2af393364403c11))
 * Debug console logs for cache initialization ([aa80a3a](https://github.com/konotorii/almond/commit/aa80a3a7454cd4fcfd4c305f15d4c2b0faffa3d0))
-
-
-
-# [1.3.0](https://github.com/konotorii/almond/compare/v1.2.0...v1.3.0) (2024-06-19)
-
-
-### Features
-
-* Dockerfile ([214d874](https://github.com/konotorii/almond/commit/214d87493a253d2ee57756fbbc11f7e2c8d6b479))
 
 
 

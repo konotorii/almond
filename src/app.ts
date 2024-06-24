@@ -100,7 +100,11 @@ app.get('/download/:platform', async (req, res) => {
     // Check platform for appropriate aliases
     platform = checkAlias(platform)
 
+    console.log(platform)
+
     const findPlatform = cache.cache.latest.platforms.find((v) => v.platform == platform)
+
+    console.log(findPlatform)
 
     if (!platform) {
         send(res, 500, 'The specified platform is not valid')

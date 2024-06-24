@@ -29,7 +29,7 @@ const cache = new Cache({
     pre: process.env.PRE || "",
 })
 
-const shouldProxyPrivateDownload = cache.config.token  && cache.config.token.length > 0
+const shouldProxyPrivateDownload = cache.config.token.length > 0
 
 app.get('/version', async (req, res) => {
     const latest = await cache.loadCache()
@@ -92,13 +92,15 @@ app.get('/download/:platform', async (req, res) => {
         platform = 'dmg_arm64'
     }
 
-    else platform = ''
+    // else platform = ''
 
     // Get the latest version from the cache
     const latest = await cache.loadCache()
 
     // Check platform for appropriate aliases
     platform = checkAlias(platform)
+
+    const findPlatform = cache.cache.latest.platforms.find((v) => v.platform == platform)
 
     if (!platform) {
         send(res, 500, 'The specified platform is not valid')
@@ -111,7 +113,7 @@ app.get('/download/:platform', async (req, res) => {
     }
 
     if (cache.config.token && cache.config.token.length > 0) {
-        await proxyPrivateDownload(platform, cache.config.token, req, res)
+        await proxyPrivateDownload(findPlatform, cache.config.token, req, res)
         return
     }
 
@@ -133,6 +135,8 @@ app.get('/update/:platform/:version', async (req, res) => {
 
         return
     }
+
+    await cache.loadCache()
 
     const platform = checkAlias(platformName)
 

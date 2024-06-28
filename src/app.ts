@@ -36,7 +36,7 @@ app.get('/version', async (req, res) => {
 
     if (!latest) return res.status(500).send('Latest not found.')
 
-    return res.send({version: latest.version, notes: latest.notes})
+    return res.send({version: latest.version, notes: latest.notes, pub_date: latest.pub_date})
 });
 
 app.get('/download', async (req, res) => {

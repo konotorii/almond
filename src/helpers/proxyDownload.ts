@@ -1,4 +1,3 @@
-import {send} from 'micro';
 import {Request, Response} from 'express';
 
 export default async function proxyPrivateDownload(asset: any, token: string, req: Request, res: Response) {
@@ -18,5 +17,5 @@ export default async function proxyPrivateDownload(asset: any, token: string, re
     })
 
     res.setHeader('Location', assetRes.headers.get('Location') || "")
-    send(res, 302)
+    res.status(302)
 }

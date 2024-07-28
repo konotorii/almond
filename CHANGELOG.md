@@ -1,3 +1,21 @@
+# [1.8.0](https://github.com/konotorii/almond/compare/v1.7.0...v1.8.0) (2024-07-28)
+
+
+### Bug Fixes
+
+* Remove unneeded test folder ([44f9e43](https://github.com/konotorii/almond/commit/44f9e432c1c89c4dbda95107aeb3d1c56752b6a8))
+* Use express response to return proxy download url ([b436a49](https://github.com/konotorii/almond/commit/b436a499206784b38477a4529a5239bba2e988d4))
+* Use express response to send status instead of micro ([#5](https://github.com/konotorii/almond/issues/5)) ([850743e](https://github.com/konotorii/almond/commit/850743e2eaa7f4213d15b58f8a38a81bd427b1d8))
+
+
+### Features
+
+* Created a docker-compose sample yml ([fb32252](https://github.com/konotorii/almond/commit/fb32252b5a985d06fa5a3bf0b5cfc5cabf09cc90))
+* Removed micro package ([#5](https://github.com/konotorii/almond/issues/5)) ([b9cdb50](https://github.com/konotorii/almond/commit/b9cdb50176c2f3e298181373cc5389f0a63edcb0))
+* Updated readme to include roadmap and run with docker compose ([4e13c45](https://github.com/konotorii/almond/commit/4e13c45e626d3cf646021de959dff9731f045bc8))
+
+
+
 # [1.7.0](https://github.com/konotorii/almond/compare/v1.6.2...v1.7.0) (2024-06-28)
 
 
@@ -32,20 +50,6 @@
 ### Features
 
 * Return release notes with getting current version ([0d5ee6a](https://github.com/konotorii/almond/commit/0d5ee6ad1c64f23f4508b4eea73cf37ddde322fd))
-
-
-
-# [1.5.0](https://github.com/konotorii/almond/compare/v1.4.0...v1.5.0) (2024-06-24)
-
-
-### Bug Fixes
-
-* Return latest cache if already cached ([f460a97](https://github.com/konotorii/almond/commit/f460a97ae4e4da6aefae1da4523f740c25aef697))
-
-
-### Features
-
-* Updated .env sample to latest ([020df53](https://github.com/konotorii/almond/commit/020df531f4d31cccfebd20a02b662419d49a5888))
 
 
 

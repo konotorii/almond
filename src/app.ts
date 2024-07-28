@@ -6,7 +6,6 @@ import {Cache} from "./helpers/cache";
 import * as middlewares from './middlewares';
 import {parse} from 'express-useragent';
 import proxyPrivateDownload from "./helpers/proxyDownload";
-import {send} from "micro";
 import checkAlias from "./helpers/aliases";
 import {valid, compare} from 'semver';
 import urlHelpers from 'url';
@@ -62,7 +61,7 @@ app.get('/download', async (req, res) => {
     const findPlatform = platforms.find((v) => v.platform == platform)
 
     if (!platform || !platforms || !findPlatform) {
-        send(res, 404, 'No download available for your platform!')
+        res.status(404).send( 'No download available for your platform!')
         return
     }
 
@@ -107,12 +106,12 @@ app.get('/download/:platform', async (req, res) => {
     console.log(findPlatform)
 
     if (!platform) {
-        send(res, 500, 'The specified platform is not valid')
+        res.status(500).send('The specified platform is not valid')
         return
     }
 
     if (!latest.platforms || !platform) {
-        send(res, 404, 'No download available for your platform')
+        res.status(404).send('No download available for your platform')
         return
     }
 
@@ -132,7 +131,7 @@ app.get('/update/:platform/:version', async (req, res) => {
     const {platform: platformName, version} = req.params
 
     if (!valid(version)) {
-        send(res, 500, {
+        res.status(500).send({
             error: 'version_invalid',
             message: 'The specified version is not SemVer-compatible'
         })
@@ -147,7 +146,7 @@ app.get('/update/:platform/:version', async (req, res) => {
     const findPlatform = cache.cache.latest.platforms.find((v) => v.platform == platform)
 
     if (!findPlatform) {
-        send(res, 500, {
+        res.status(500).send({
             error: 'invalid_platform',
             message: 'The specified platform is not valid'
         })
@@ -178,7 +177,7 @@ app.get('/update/:platform/:version', async (req, res) => {
     if (compare(latest.version, version) !== 0) {
         const {notes, pub_date} = latest
 
-        send(res, 200, {
+        res.status(200).send({
             name: latest.version,
             notes,
             pub_date,

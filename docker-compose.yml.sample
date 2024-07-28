@@ -1,0 +1,14 @@
+version: '3.9'
+
+services:
+    almond:
+        image: konotorii/almond
+        container_name: almond
+        restart: always
+        ports:
+            - 5000:5000
+        environment:
+            - ACCOUNT=
+            - REPOSITORY=
+            - TOKEN=
+            - URL=

@@ -133,9 +133,9 @@ export class Cache {
                 const response = await fetch(url, {headers})
 
                 if (response.status !== 200) {
-                    throw new Error(
-                        `GitHub API responded with ${response.status} for url ${url}`
-                    )
+                    consola.error(`GitHub API responded with ${response.status} for url ${url}`)
+
+                    return 500
                 }
 
                 return response
@@ -143,7 +143,11 @@ export class Cache {
             {retries: 3}
         )
 
-        const data = await response.json()
+        if (typeof response === 'number') {
+            return
+        }
+
+        const data = await (response as Response).json()
 
         if (!Array.isArray(data) || data.length === 0) {
             return

@@ -69,7 +69,7 @@ export class Cache {
 
         this.cache.lastUpdate = null
 
-        console.log(this.cache)
+        // console.log(this.cache)
 
         consola.success('Cache successfully constructed!');
     }
@@ -161,12 +161,12 @@ export class Cache {
         const {tag_name} = release
 
         if (this.cache.latest.version === tag_name) {
-            console.log('Cached version is the same as latest')
+            consola.log('Cached version is the same as latest')
             this.cache.lastUpdate = Date.now()
             return this.cache.latest
         }
 
-        console.log(`Caching version ${tag_name}...`)
+        consola.log(`Caching version ${tag_name}...`)
 
         this.cache.latest.version = tag_name
         this.cache.latest.notes = release.body
@@ -208,7 +208,7 @@ export class Cache {
             });
         }
 
-        console.log(`Finished caching version ${tag_name}`)
+        consola.log(`Finished caching version ${tag_name}`)
         this.cache.lastUpdate = Date.now()
 
         return this.cache.latest

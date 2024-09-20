@@ -33,6 +33,8 @@ const shouldProxyPrivateDownload = cache.config.token.length > 0
 app.get('/version', async (req, res) => {
     const latest = await cache.loadCache()
 
+    consola.log(`Request for latest version from ${req.useragent} | ${req.ip}`);
+
     if (!latest) return res.status(500).send('Latest not found.')
 
     return res.send({version: latest.version, notes: latest.notes, pub_date: latest.pub_date})
@@ -54,6 +56,8 @@ app.get('/download', async (req, res) => {
     } else {
         platform = ''
     }
+
+    consola.log(`Request for download from ${req.useragent} | ${req.ip}`);
 
     // Get the latest version from the cache
     const {platforms} = await cache.loadCache()
@@ -91,6 +95,8 @@ app.get('/download/:platform', async (req, res) => {
         platform = 'dmg_arm64'
     }
 
+    consola.log(`Request for ${platform} download from ${req.useragent} | ${req.ip}`);
+
     // else platform = ''
 
     // Get the latest version from the cache
@@ -99,11 +105,11 @@ app.get('/download/:platform', async (req, res) => {
     // Check platform for appropriate aliases
     platform = checkAlias(platform)
 
-    console.log(platform)
+    // console.log(platform)
 
     const findPlatform = cache.cache.latest.platforms.find((v) => v.platform == platform)
 
-    console.log(findPlatform)
+    // console.log(findPlatform)
 
     if (!platform) {
         res.status(500).send('The specified platform is not valid')
@@ -122,9 +128,9 @@ app.get('/download/:platform', async (req, res) => {
 
     res.writeHead(302, {
         Location: latest.platforms.find((v) => v.platform == platform)?.url
-    })
+    });
 
-    res.end()
+    res.end();
 });
 
 app.get('/update/:platform/:version', async (req, res) => {
@@ -153,6 +159,8 @@ app.get('/update/:platform/:version', async (req, res) => {
 
         return
     }
+
+    consola.log(`Request for ${platform} download of version ${version} from ${req.useragent} | ${req.ip}`);
 
     // Get the latest version from the cache
     const latest = await cache.loadCache()
@@ -207,6 +215,8 @@ app.get('/releases', async (req, res) => {
 
         return
     }
+
+    consola.log(`Request for releases from ${req.useragent} | ${req.ip}`);
 
     const content = latest.files.releases
 

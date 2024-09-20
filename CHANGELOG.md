@@ -1,3 +1,19 @@
+# [1.9.0](https://github.com/konotorii/almond/compare/v1.8.0...v1.9.0) (2024-09-20)
+
+
+### Bug Fixes
+
+* Fixed .env example ([0592845](https://github.com/konotorii/almond/commit/0592845496cda5d5c371b07e2de47948ac45f971))
+* Rewrote GitHub API error to not stop runtime and return null back to user ([3de599b](https://github.com/konotorii/almond/commit/3de599b2328bf59ed4bd6058396668dfdda2ffdb))
+
+
+### Features
+
+* Added helpful logs ([1bfece5](https://github.com/konotorii/almond/commit/1bfece507c79b176aa330d05f5f5ece7c0f82c13))
+* Switched console logs to consola and removed an unneeded comment ([5ff2ac7](https://github.com/konotorii/almond/commit/5ff2ac700fa133507633e90149297a1ef94eb944))
+
+
+
 # [1.8.0](https://github.com/konotorii/almond/compare/v1.7.0...v1.8.0) (2024-07-28)
 
 
@@ -41,15 +57,6 @@
 
 * Gets correct platform and loads cache on all routes ([5aef64d](https://github.com/konotorii/almond/commit/5aef64d4e950ba60fcd0055d2aef379d8b9f18c7))
 * Proxy Downloader sends token through headers instead of inside URL ([92229d7](https://github.com/konotorii/almond/commit/92229d7965a26d01ed6e32e3a5d84a769e5daa7b))
-
-
-
-# [1.6.0](https://github.com/konotorii/almond/compare/v1.5.0...v1.6.0) (2024-06-24)
-
-
-### Features
-
-* Return release notes with getting current version ([0d5ee6a](https://github.com/konotorii/almond/commit/0d5ee6ad1c64f23f4508b4eea73cf37ddde322fd))
 
 
 
